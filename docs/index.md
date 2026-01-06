@@ -30,9 +30,12 @@ import this
 ```
 会出现如下一段话：
 
-![Python之禅](./_assets/index_1.jpg)
+![Python之禅](./_assets/img/index_1.jpg)
+
+## 推荐
+1.  [allendowney的ThinkPython](https://allendowney.github.io/ThinkPython/)
 
 ## 参考
-[英文解释](https://inventwithpython.com/blog/2018/08/17/the-zen-of-python-explained/#:~:text=a%20bad%20idea.-,If%20the%20implementation%20is%20easy%20to%20explain%2C%20it%20may%20be,programmers%20who%20maintain%20the%20code)
+1. [Python哲学的英文解释](https://inventwithpython.com/blog/2018/08/17/the-zen-of-python-explained/#:~:text=a%20bad%20idea.-,If%20the%20implementation%20is%20easy%20to%20explain%2C%20it%20may%20be,programmers%20who%20maintain%20the%20code)
+2. [The Zen of Python](https://peps.python.org/pep-0020/)
 
-https://peps.python.org/pep-0020/

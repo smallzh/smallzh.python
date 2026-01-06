@@ -14,8 +14,11 @@ nav:
     - 迭代器生成器: iterator_generator.md
     - 文件: file.md
     - 命令行: command_line.md
+    - 一切皆对象: all_is_object.md
+    - 运行模型: run_model.md
     - pip: pip.md
     - setup: setup.md
+    - uv: uv.md
     - 海龟绘图: python_turtle.md
     - Flask: flask.md
     - SQLAlchemy: sqlalchemy.md
