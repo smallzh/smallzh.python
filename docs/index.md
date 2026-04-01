@@ -1,8 +1,8 @@
 # 了解一下Python？
 
-这里相关Python的全部内容，都基于`Python3.10.11`进行说明。
+这里相关Python的全部内容，都基于`Python3.13+`进行说明。
 
-在官网的[https://docs.python.org/3.10/tutorial/appetite.html](https://docs.python.org/3.10/tutorial/appetite.html)这个页面，有这么一段
+在官网的[https://docs.python.org/3.13/tutorial/appetite.html](https://docs.python.org/3.13/tutorial/appetite.html)这个页面，有这么一段
 
 > By the way, the language is named after the BBC show “Monty Python’s Flying Circus” and has nothing to do with reptiles. Making references to Monty Python skits in documentation is not only allowed, it is encouraged!
 >

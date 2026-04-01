@@ -5,30 +5,55 @@ theme:
    name: smzhbook
 
 nav:
-    - 介绍: index.md
-    - 数据类型: data_type.md
-    - 字符串: string.md
-    - 注释: notes.md
-    - 流程控制: process_control.md
-    - 函数: function.md
-    - 内部函数: inner_function.md
-    - 类: class.md
-    - 模块: modules.md
-    - 迭代器生成器: iterator_generator.md
-    - 文件: file.md
-    - 命令行: command_line.md
-    - 一切皆对象: all_is_object.md
-    - 运行模型: run_model.md
-    - uv: uv.md
-    - pip: pip.md
-    - setup: setup.md
-    - 发布pip包: publish_to_pypi.md
-    - 海龟绘图: python_turtle.md
-    - Flask: flask.md
-    - SQLAlchemy: sqlalchemy.md
-    - streamlit: streamlit.md
-    - scapy: scapy.md
-    - 数学库: math_lib.md
+    - 入门基础:
+        - 介绍: index.md
+        - 数据类型: data_type.md
+        - 字符串: string.md
+        - 注释: notes.md
+        - 流程控制: process_control.md
+
+    - 核心编程:
+        - 函数: function.md
+        - 类: class.md
+        - 模块: modules.md
+        - 异常处理: exception.md
+
+    - 进阶特性:
+        - 内部函数: inner_function.md
+        - 迭代器生成器: iterator_generator.md
+        - 上下文管理器: context_manager.md
+        - 类型提示: typing.md
+
+    - 实用技能:
+        - 文件: file.md
+        - JSON处理: json.md
+        - 日期时间: datetime.md
+        - 正则表达式: regex.md
+        - 命令行: command_line.md
+
+    - 开发工具:
+        - HTTP请求: requests.md
+        - 日志处理: logging.md
+        - 单元测试: unittest.md
+        - 并发编程: concurrent.md
+
+    - 包管理:
+        - uv: uv.md
+        - pip: pip.md
+        - setup: setup.md
+        - 发布pip包: publish_to_pypi.md
+
+    - 原理深入:
+        - 一切皆对象: all_is_object.md
+        - 运行模型: run_model.md
+
+    - 第三方库:
+        - Flask: flask.md
+        - SQLAlchemy: sqlalchemy.md
+        - Streamlit: streamlit.md
+        - 数学库: math_lib.md
+        - 海龟绘图: python_turtle.md
+        - Scapy: scapy.md
 
 
 plugins: []
