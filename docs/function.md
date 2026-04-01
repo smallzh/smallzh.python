@@ -453,8 +453,394 @@ help(complex_function)
 print(complex_function.__doc__)
 ```
 
+## 0x0B. 异步函数（async/await）
+
+异步函数使用 `async def` 定义，通过 `await` 关键字等待异步操作完成。异步函数允许程序在等待 I/O 操作时执行其他任务，提高程序的并发性能。
+
+### 基本概念
+
+```python
+"""
+协程（Coroutine）：使用 async def 定义的函数，调用后返回协程对象
+await：暂停当前协程的执行，等待另一个协程完成
+asyncio：Python 的异步 I/O 框架，提供事件循环和协程调度
+"""
+
+import asyncio
+
+# 异步函数的定义
+async def hello():
+    """异步函数使用 async def 定义"""
+    print('Hello')
+    await asyncio.sleep(1)  # 等待 1 秒（不阻塞事件循环）
+    print('World')
+
+# 调用异步函数返回协程对象，不是直接执行
+coro = hello()
+print(type(coro))  # <class 'coroutine'>
+
+# 使用 asyncio.run() 运行协程
+asyncio.run(hello())
+# 输出:
+# Hello
+# (等待1秒)
+# World
+```
+
+### await 关键字
+
+```python
+import asyncio
+
+async def fetch_data():
+    """模拟获取数据的异步操作"""
+    print('开始获取数据...')
+    await asyncio.sleep(2)  # 模拟网络请求
+    print('数据获取完成')
+    return {'id': 1, 'name': 'Alice'}
+
+async def process_data():
+    """等待并处理数据"""
+    data = await fetch_data()  # 等待 fetch_data 完成
+    print(f'处理数据: {data}')
+    return data
+
+# 运行
+asyncio.run(process_data())
+# 输出:
+# 开始获取数据...
+# (等待2秒)
+# 数据获取完成
+# 处理数据: {'id': 1, 'name': 'Alice'}
+```
+
+### 并发执行多个协程
+
+```python
+import asyncio
+
+async def task(name, delay):
+    """模拟异步任务"""
+    print(f'任务 {name} 开始')
+    await asyncio.sleep(delay)
+    print(f'任务 {name} 完成')
+    return f'{name} 的结果'
+
+async def main():
+    # 方式 1：顺序执行（慢）
+    print('=== 顺序执行 ===')
+    r1 = await task('A', 2)
+    r2 = await task('B', 1)
+    print(f'结果: {r1}, {r2}')
+    
+    # 方式 2：并发执行（快）
+    print('\n=== 并发执行 ===')
+    results = await asyncio.gather(
+        task('C', 2),
+        task('D', 1),
+        task('E', 3)
+    )
+    print(f'结果: {results}')
+
+asyncio.run(main())
+# 并发执行时，任务同时进行，总耗时约 3 秒（而非 6 秒）
+```
+
+### asyncio.gather vs asyncio.create_task
+
+```python
+import asyncio
+
+async def fetch_url(url, delay):
+    """模拟网络请求"""
+    print(f'请求 {url} 开始')
+    await asyncio.sleep(delay)
+    print(f'请求 {url} 完成')
+    return f'{url} 的数据'
+
+async def main():
+    # gather：等待所有协程完成
+    print('=== 使用 gather ===')
+    results = await asyncio.gather(
+        fetch_url('api/users', 2),
+        fetch_url('api/posts', 1),
+        fetch_url('api/comments', 3)
+    )
+    print(f'结果: {results}\n')
+    
+    # create_task：创建独立任务，可以分别等待
+    print('=== 使用 create_task ===')
+    task1 = asyncio.create_task(fetch_url('api/data1', 2))
+    task2 = asyncio.create_task(fetch_url('api/data2', 1))
+    
+    # 可以在任务完成前做其他事情
+    print('任务已创建，做其他事情...')
+    
+    # 等待任务完成
+    result1 = await task1
+    result2 = await task2
+    print(f'结果: {result1}, {result2}')
+
+asyncio.run(main())
+```
+
+### 异步上下文管理器
+
+```python
+import asyncio
+
+class AsyncDatabaseConnection:
+    """异步数据库连接"""
+    
+    async def __aenter__(self):
+        """异步进入上下文"""
+        print('正在连接数据库...')
+        await asyncio.sleep(1)  # 模拟连接过程
+        print('数据库连接成功')
+        return self
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """异步退出上下文"""
+        print('正在关闭数据库连接...')
+        await asyncio.sleep(0.5)  # 模拟关闭过程
+        print('数据库连接已关闭')
+        return False
+    
+    async def query(self, sql):
+        """执行查询"""
+        print(f'执行查询: {sql}')
+        await asyncio.sleep(0.5)
+        return [{'id': 1, 'name': 'Alice'}]
+
+async def main():
+    async with AsyncDatabaseConnection() as db:
+        results = await db.query('SELECT * FROM users')
+        print(f'查询结果: {results}')
+
+asyncio.run(main())
+# 输出:
+# 正在连接数据库...
+# 数据库连接成功
+# 执行查询: SELECT * FROM users
+# 查询结果: [{'id': 1, 'name': 'Alice'}]
+# 正在关闭数据库连接...
+# 数据库连接已关闭
+```
+
+### 异步迭代器
+
+```python
+import asyncio
+
+class AsyncRange:
+    """异步范围迭代器"""
+    
+    def __init__(self, start, stop, delay=0.1):
+        self.start = start
+        self.stop = stop
+        self.delay = delay
+        self.current = start
+    
+    def __aiter__(self):
+        return self
+    
+    async def __anext__(self):
+        if self.current >= self.stop:
+            raise StopAsyncIteration
+        
+        await asyncio.sleep(self.delay)  # 模拟异步操作
+        value = self.current
+        self.current += 1
+        return value
+
+async def main():
+    # 异步迭代
+    async for i in AsyncRange(0, 5, delay=0.5):
+        print(f'获取到值: {i}')
+    
+    # 异步生成器
+    async def async_generator():
+        for i in range(5):
+            await asyncio.sleep(0.5)
+            yield i
+    
+    print('\n=== 异步生成器 ===')
+    async for i in async_generator():
+        print(f'生成器产生: {i}')
+
+asyncio.run(main())
+```
+
+### 异步队列
+
+```python
+import asyncio
+
+async def producer(queue, name, items):
+    """生产者：向队列添加数据"""
+    for item in items:
+        await asyncio.sleep(0.5)  # 模拟生产过程
+        await queue.put(f'{name}-{item}')
+        print(f'生产者 {name} 生产了: {name}-{item}')
+    
+    # 发送结束信号
+    await queue.put(None)
+
+async def consumer(queue, name):
+    """消费者：从队列获取数据"""
+    while True:
+        item = await queue.get()
+        if item is None:
+            # 收到结束信号
+            await queue.put(None)  # 通知其他消费者
+            break
+        
+        print(f'消费者 {name} 处理了: {item}')
+        await asyncio.sleep(0.3)  # 模拟处理过程
+        queue.task_done()
+
+async def main():
+    # 创建队列
+    queue = asyncio.Queue(maxsize=5)
+    
+    # 启动生产者和消费者
+    producer_task = asyncio.create_task(
+        producer(queue, 'P1', ['A', 'B', 'C'])
+    )
+    consumer_task = asyncio.create_task(
+        consumer(queue, 'C1')
+    )
+    
+    # 等待生产者完成
+    await producer_task
+    
+    # 等待队列处理完毕
+    await queue.join()
+    
+    # 取消消费者
+    consumer_task.cancel()
+
+asyncio.run(main())
+```
+
+### 异常处理
+
+```python
+import asyncio
+
+async def risky_operation(fail=False):
+    """可能失败的异步操作"""
+    await asyncio.sleep(1)
+    if fail:
+        raise ValueError('操作失败')
+    return '成功'
+
+async def main():
+    # 处理单个协程的异常
+    try:
+        result = await risky_operation(fail=True)
+    except ValueError as e:
+        print(f'捕获异常: {e}')
+    
+    # 使用 gather 处理多个协程的异常
+    try:
+        results = await asyncio.gather(
+            risky_operation(fail=False),
+            risky_operation(fail=True),
+            risky_operation(fail=False),
+            return_exceptions=True  # 返回异常而不是抛出
+        )
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                print(f'任务 {i} 失败: {result}')
+            else:
+                print(f'任务 {i} 成功: {result}')
+    except Exception as e:
+        print(f'其他异常: {e}')
+
+asyncio.run(main())
+```
+
+### 实际应用：并发 HTTP 请求
+
+```python
+import asyncio
+import aiohttp  # 需要安装: pip install aiohttp
+
+async def fetch_url(session, url):
+    """异步获取 URL 内容"""
+    try:
+        async with session.get(url) as response:
+            content = await response.text()
+            return {'url': url, 'status': response.status, 'length': len(content)}
+    except Exception as e:
+        return {'url': url, 'error': str(e)}
+
+async def fetch_all(urls):
+    """并发获取多个 URL"""
+    async with aiohttp.ClientSession() as session:
+        tasks = [fetch_url(session, url) for url in urls]
+        results = await asyncio.gather(*tasks)
+        return results
+
+# 使用示例
+async def main():
+    urls = [
+        'http://example.com',
+        'http://example.org',
+        'http://example.net',
+    ]
+    
+    results = await fetch_all(urls)
+    for result in results:
+        print(result)
+
+# 取消注释以运行（需要安装 aiohttp）
+# asyncio.run(main())
+```
+
+### 最佳实践
+
+```python
+"""
+1. 使用 asyncio.run() 作为程序入口
+2. 避免在异步函数中使用阻塞操作（如 time.sleep）
+3. 使用 asyncio.gather() 或 create_task() 实现并发
+4. 正确处理异步上下文和异常
+5. 使用异步库（aiohttp, aiofiles, asyncpg 等）
+"""
+
+import asyncio
+
+# ✅ 正确做法
+async def correct_example():
+    await asyncio.sleep(1)  # 使用 asyncio.sleep
+    return 'done'
+
+# ❌ 错误做法
+# async def wrong_example():
+#     import time
+#     time.sleep(1)  # 阻塞事件循环！
+#     return 'done'
+
+# ✅ 异步文件操作
+import aiofiles  # 需要安装: pip install aiofiles
+
+async def read_file_async(path):
+    async with aiofiles.open(path, 'r') as f:
+        content = await f.read()
+        return content
+
+# ❌ 阻塞文件操作
+# async def read_file_blocking(path):
+#     with open(path, 'r') as f:  # 阻塞！
+#         return f.read()
+```
+
 ## 参考
 1. [Python 官方文档 - 定义函数](https://docs.python.org/3/tutorial/controlflow.html#defining-functions)
 2. [Python 官方文档 - 函数注解](https://docs.python.org/3/tutorial/controlflow.html#function-annotations)
 3. [PEP 3107 - 函数注解](https://peps.python.org/pep-3107/)
 4. [PEP 484 - 类型提示](https://peps.python.org/pep-0484/)
+5. [Python 官方文档 - asyncio](https://docs.python.org/3/library/asyncio.html)
+6. [PEP 492 - async/await 语法](https://peps.python.org/pep-0492/)
