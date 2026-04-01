@@ -1,6 +1,9 @@
 site_name: smallzh's python
 #site_url: https://github.com/smallzh/smallzh.python
 
+theme:
+   name: smzhbook
+
 nav:
     - 介绍: index.md
     - 数据类型: data_type.md
@@ -16,9 +19,10 @@ nav:
     - 命令行: command_line.md
     - 一切皆对象: all_is_object.md
     - 运行模型: run_model.md
+    - uv: uv.md
     - pip: pip.md
     - setup: setup.md
-    - uv: uv.md
+    - 发布pip包: publish_to_pypi.md
     - 海龟绘图: python_turtle.md
     - Flask: flask.md
     - SQLAlchemy: sqlalchemy.md
@@ -26,7 +30,5 @@ nav:
     - scapy: scapy.md
     - 数学库: math_lib.md
 
-theme:
-   name: gitbook
 
 plugins: []
