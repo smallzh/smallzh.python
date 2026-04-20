@@ -13,3 +13,8 @@ uv sync
 ```shell
 uv run mkdocs serve
 ```
+
+## 3.运行
+```shell
+uv run pytest src/ -V
+```
